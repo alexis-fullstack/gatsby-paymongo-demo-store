@@ -49,22 +49,37 @@ const API = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     
     if (typeof window !== `undefined`) {
       if (paymentData.paymentAmount !== null) { 
-        axios.post("https://paymongo-api-v2.onrender.com/api/payment", paymentData)
-        .then(({ data }) => {
-          setLoading(false);
-          setPaymentResult(data);
-          if (data.error === false) {
-            window.location.assign("/gatsby-paymongo-demo-store/success-payment")
-          } else {
-            window.location.assign("/gatsby-paymongo-demo-store/failed-payment")
+        // axios.post("https://paymongo-api-v2.onrender.com/api/payment", paymentData)
+        // .then(({ data }) => {
+        //   setLoading(false);
+        //   setPaymentResult(data);
+        //   if (data.error === false) {
+        //     window.location.assign("/gatsby-paymongo-demo-store/success-payment")
+        //   } else {
+        //     window.location.assign("/gatsby-paymongo-demo-store/failed-payment")
+        //   }
+        // })
+
+        const { data } = await axios.post("https://paymongo-api-uv4q.onrender.com/api/payment", paymentData, {
+          headers: {
+            'Access-Control-Allow-Origin': 'https://paymongo-api-uv4q.onrender.com',
+            'Access-Control-Allow-Credentials': true
           }
-        })
+        });
+        setLoading(false);
+        setPaymentResult(data);
+
+        if(!data.error) {
+          window.location.assign("/gatsby-paymongo-demo-store/success-payment")
+        } else {
+          window.location.assign("/gatsby-paymongo-demo-store/failed-payment")
+        }
       }
     }    
   }
